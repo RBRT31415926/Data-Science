@@ -1,51 +1,68 @@
-def ASSIGNMENT(new_list, i, old_list, j):
-    new_list[i] = old_list[j]
+import matplotlib.pyplot as plt
+
+def assignment(new_list, new_index, old_list, old_index):
+    new_list[new_index] = old_list[old_index]
 
 
-def mergeSort(list_to_sort_by_merge):
+def mergeSort(input_list):
     if (
-        len(list_to_sort_by_merge) > 1
-        and not len(list_to_sort_by_merge) < 1
-        and len(list_to_sort_by_merge) != 0
+        len(input_list) > 1
     ):
-        mid = len(list_to_sort_by_merge) // 2
-        left = list_to_sort_by_merge[:mid]
-        right = list_to_sort_by_merge[mid:]
-
+        # Teile die Liste mittig in zwei neue Listen
+        mid = len(input_list) // 2
+        left = input_list[:mid]
+        right = input_list[mid:]
+        # Rekursiver Aufruf mit den Teillisten
         mergeSort(left)
         mergeSort(right)
 
-        l = 0
-        r = 0
-        i = 0
-
-        while l < len(left) and r < len(right):
-            if left[l] <= right[r]:
-                ASSIGNMENT(new_list=list_to_sort_by_merge, i=i, old_list=left, j=l)
-                l += 1
+        left_iter = 0
+        right_iter= 0
+        combined_iter = 0
+        
+        # Iteriere über beide Teillisten
+        while left_iter < len(left) and right_iter< len(right):
+            # Falls das derzeitige Element in left kleiner ist, füge es zuerst 
+            # in die neue Liste
+            if left[left_iter] <= right[right_iter]:
+                assignment(input_list, combined_iter, left, left_iter)
+                left_iter += 1
+            # Sonst füge das Element aus der rechten Liste hinzu
             else:
-                ASSIGNMENT(new_list=list_to_sort_by_merge, i=i, old_list=right, j=r)
-                r += 1
-            i += 1
+                assignment(input_list, combined_iter, right, right_iter)
+                right_iter+= 1
+            combined_iter += 1
 
-        while l < len(left):
-            list_to_sort_by_merge[i] = left[l]
-            l += 1
-            i += 1
+        # Falls alle Elemente einer Teilliste einsortiert sind, füge alle restlichen
+        # Elemente der anderen Liste danach hinzu.
+        while left_iter < len(left):
+            input_list[combined_iter] = left[left_iter]
+            left_iter += 1
+            combined_iter += 1
 
-        while r < len(right):
-            list_to_sort_by_merge[i] = right[r]
-            r += 1
-            i += 1
+        while right_iter< len(right):
+            input_list[combined_iter] = right[right_iter]
+            right_iter+= 1
+            combined_iter += 1
 
 
-import matplotlib.pyplot as plt
+test_input = [54, 26, 93, 17, 77, 31, 44, 55, 20]
 
-my_list = [54, 26, 93, 17, 77, 31, 44, 55, 20]
-x = range(len(my_list))
-plt.plot(x, my_list)
-plt.show()
-mergeSort(my_list)
-x = range(len(my_list))
-plt.plot(x, my_list)
-plt.show()
+list_indices = range(len(test_input))
+
+fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, sharey = True, figsize=(14, 7))
+
+ax1 = plt.subplot(1, 2, 1)
+plt.ylabel("Wert", fontsize=20) 
+plt.xlabel("Position in Liste", fontsize=20)
+plt.scatter(list_indices, test_input, label="Listeneintrag")
+plt.title("Liste vor Mergesort",fontsize=20)
+plt.legend(loc="upper right", frameon=True, fontsize=15)
+
+mergeSort(test_input)
+
+ax2 = plt.subplot(1, 2, 2)
+plt.xlabel("Position in Liste", fontsize=20)
+plt.scatter(list_indices, test_input, label="Listeneintrag")
+plt.title("Liste nach Mergesort", fontsize=20)
+plt.legend(loc="upper left", frameon=True, fontsize=15);
